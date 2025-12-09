@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import get_settings
 from .database import engine
 from .models import Base
-from .routers import audits, lookups
+from .routers import audits, auth, lookups
 
 settings = get_settings()
 
@@ -35,3 +35,4 @@ def root_healthcheck():
 
 app.include_router(lookups.router)
 app.include_router(audits.router)
+app.include_router(auth.router)

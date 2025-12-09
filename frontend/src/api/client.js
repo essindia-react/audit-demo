@@ -1,9 +1,36 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
+let accessToken = null;
+
+export function setAccessToken(token) {
+  accessToken = token;
+  if (typeof window !== "undefined") {
+    if (token) {
+      window.localStorage.setItem("access_token", token);
+    } else {
+      window.localStorage.removeItem("access_token");
+    }
+  }
+}
+
+export function getAccessToken() {
+  if (accessToken) return accessToken;
+  if (typeof window !== "undefined") {
+    const stored = window.localStorage.getItem("access_token");
+    if (stored) {
+      accessToken = stored;
+      return stored;
+    }
+  }
+  return null;
+}
+
 async function request(path, options = {}) {
+  const token = getAccessToken();
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
     ...options,
@@ -45,6 +72,25 @@ export const lookupsApi = {
   severityOptions: () => request("/lookups/severity-options"),
   monitoringFocus: () => request("/lookups/monitoring-focus"),
   modules: () => request("/lookups/modules"),
+};
+
+export const authApi = {
+  register: (payload) =>
+    request("/auth/register", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  login: ({ email, password }) =>
+    request("/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        username: email,
+        password,
+        scope: "",
+      }),
+    }),
+  me: () => request("/auth/me"),
 };
 
 export { API_BASE_URL };

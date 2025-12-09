@@ -43,6 +43,24 @@
   max-width: 640px;
 }
 
+.user-pill {
+  align-self: flex-start;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+  text-align: right;
+}
+
+.user-pill span {
+  display: block;
+  font-weight: 600;
+}
+
+.user-pill small {
+  color: var(--text-muted);
+}
+
 .layout-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -527,6 +545,59 @@ button:disabled {
 
 .empty-state {
   text-align: center;
+}
+
+/* Auth */
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-card {
+  width: min(480px, 100%);
+  background: rgba(15, 23, 42, 0.8);
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(16px);
+}
+
+.auth-card header h1 {
+  margin-bottom: 0.5rem;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+}
+
+.auth-toggle {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.25rem;
+  background: rgba(148, 163, 184, 0.15);
+  margin-top: 1rem;
+}
+
+.auth-toggle button {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.auth-toggle button.active {
+  background: var(--gradient-one);
+  color: white;
+  box-shadow: 0 10px 20px rgba(93, 224, 230, 0.3);
+}
+
+@media (max-width: 640px) {
+  .auth-card {
+    padding: 1.75rem;
+  }
 }
 
 @media (max-width: 1024px) {

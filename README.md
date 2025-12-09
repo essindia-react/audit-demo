@@ -44,6 +44,9 @@ Full-stack reference implementation for the Nigerian Bureau of Public Procuremen
 | POST | `/audits/{id}/findings` | Add a technical/financial finding |
 | POST | `/audits/{id}/findings/{finding_id}/evidence` | Attach evidence reference |
 | GET | `/audits/dashboard/summary` | Portfolio KPIs for dashboard |
+| POST | `/auth/register` | Create user account + issue JWT |
+| POST | `/auth/login` | Exchange credentials for JWT |
+| GET | `/auth/me` | Fetch current profile (requires Bearer token) |
 
 ## Frontend setup (React)
 1. Install dependencies and configure API base URL:
@@ -65,6 +68,7 @@ The React dashboard includes:
 - Portfolio snapshot cards (audits, compliance, severity mix).
 - Audit selector, creation form, and detail workspace with step updates + findings capture.
 - Checklist panel mirroring the BPP nine steps + H2 monitoring/remedy module with World Bank alignment tags.
+- Authentication shell with login & registration workflow (JWT stored client-side, injected into all API calls).
 
 ## Next steps / extensions
 - Add auth (MFA, RBAC) and encrypted offline store for field devices.

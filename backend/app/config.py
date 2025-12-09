@@ -18,6 +18,8 @@ class Settings(BaseSettings):
         env="FRONTEND_ORIGINS",
     )
     sync_schema_on_startup: bool = Field(default=False, env="SYNC_SCHEMA_ON_STARTUP")
+    secret_key: str = Field(default="change-me", env="SECRET_KEY")
+    access_token_expire_minutes: int = Field(default=60 * 24, env="ACCESS_TOKEN_EXPIRE_MINUTES")
 
     class Config:
         env_file = ".env"

@@ -6,7 +6,8 @@ import AuditDetail from "./components/AuditDetail";
 import ChecklistPanel from "./components/ChecklistPanel";
 import ModuleMatrix from "./components/ModuleMatrix";
 import ModuleStatusForm from "./components/ModuleStatusForm";
-import { auditsApi, lookupsApi } from "./api/client";
+import AuthPanel from "./components/AuthPanel";
+import { auditsApi, authApi, lookupsApi, setAccessToken, getAccessToken } from "./api/client";
 import { fallbackBppSteps } from "./data/bppSteps";
 import { fallbackModuleCatalog } from "./data/modules";
 import "./App.css";
@@ -38,12 +39,36 @@ function App() {
   const [notification, setNotification] = useState(null);
   const [moduleEditor, setModuleEditor] = useState(null);
   const [moduleSaving, setModuleSaving] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authMode, setAuthMode] = useState("login");
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
   const toastTimeout = useRef();
 
   const showToast = useCallback((message, variant = "info") => {
     if (toastTimeout.current) window.clearTimeout(toastTimeout.current);
     setNotification({ message, variant });
     toastTimeout.current = window.setTimeout(() => setNotification(null), 4000);
+  }, []);
+
+  useEffect(() => {
+    async function hydrateAuth() {
+      const token = getAccessToken();
+      if (!token) {
+        setAuthReady(true);
+        return;
+      }
+      try {
+        const profile = await authApi.me();
+        setCurrentUser(profile);
+      } catch {
+        setAccessToken(null);
+      } finally {
+        setAuthReady(true);
+      }
+    }
+
+    hydrateAuth();
   }, []);
 
   const loadAuditDetail = useCallback(
@@ -69,7 +94,13 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
+
     async function bootstrap() {
+      setLoading(true);
       try {
         const auditList = await auditsApi.list().catch(() => []);
         const steps = await lookupsApi.bppSteps().catch(() => fallbackBppSteps);
@@ -87,6 +118,9 @@ function App() {
           const firstId = auditList[0].id;
           setSelectedAuditId(firstId);
           await loadAuditDetail(firstId);
+        } else {
+          setSelectedAudit(null);
+          setSelectedAuditId(null);
         }
 
         await loadDashboard();
@@ -98,7 +132,7 @@ function App() {
     }
 
     bootstrap();
-  }, [loadAuditDetail, loadDashboard, showToast]);
+  }, [currentUser, loadAuditDetail, loadDashboard, showToast]);
 
   useEffect(() => {
     setModuleEditor(null);
@@ -184,11 +218,53 @@ function App() {
 
   const handleModuleStatusCancel = () => setModuleEditor(null);
 
-  if (loading) {
+  const handleLogin = async (credentials) => {
+    setAuthLoading(true);
+    try {
+      const result = await authApi.login(credentials);
+      setAccessToken(result.access_token);
+      setCurrentUser(result.user);
+      showToast("Welcome back!", "success");
+    } catch (error) {
+      showToast(error.message, "error");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleRegister = async (payload) => {
+    setAuthLoading(true);
+    try {
+      const result = await authApi.register(payload);
+      setAccessToken(result.access_token);
+      setCurrentUser(result.user);
+      showToast("Account created", "success");
+    } catch (error) {
+      showToast(error.message, "error");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  if (!authReady || (currentUser && loading)) {
     return (
       <div className="loading-screen">
         <div className="loader" />
         <p>Loading procurement audit workspace...</p>
+      </div>
+    );
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="app-shell">
+        <AuthPanel
+          mode={authMode}
+          onModeChange={setAuthMode}
+          onLogin={handleLogin}
+          onRegister={handleRegister}
+          loading={authLoading}
+        />
       </div>
     );
   }
@@ -201,6 +277,10 @@ function App() {
           <p className="muted">
             Built for Nigerian BPP nine-step audits with World Bank alignment, offline resilience, and evidence capture.
           </p>
+        </div>
+        <div className="user-pill">
+          <span>{currentUser.full_name || "Auditor"}</span>
+          <small>{currentUser.email}</small>
         </div>
       </header>
 
