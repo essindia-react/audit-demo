@@ -7,6 +7,7 @@ Full-stack reference implementation for the Nigerian Bureau of Public Procuremen
 - **Frontend**: React 19 (Vite), modern component layout, API client + optimistic UI hints.
 - **Domain model**: Audits, steps, findings, evidence items, stakeholder engagements, and monitoring snapshots.
 - **Reference data**: BPP step checklist + World Bank mapping exposed via `/lookups` endpoints for use across channels (web, mobile, curriculum authoring, etc.).
+- **Module catalog**: Full TOR coverage for Modules A–D (core BPP, Monitoring & Evaluation, Technical, Supporting) with per-submodule compliance tracking.
 
 ## Backend setup (Python)
 1. Create a virtual environment and install dependencies:

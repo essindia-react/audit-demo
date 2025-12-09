@@ -4,8 +4,11 @@ import AuditList from "./components/AuditList";
 import NewAuditForm from "./components/NewAuditForm";
 import AuditDetail from "./components/AuditDetail";
 import ChecklistPanel from "./components/ChecklistPanel";
+import ModuleMatrix from "./components/ModuleMatrix";
+import ModuleStatusForm from "./components/ModuleStatusForm";
 import { auditsApi, lookupsApi } from "./api/client";
 import { fallbackBppSteps } from "./data/bppSteps";
+import { fallbackModuleCatalog } from "./data/modules";
 import "./App.css";
 
 const defaultComplianceOptions = [
@@ -30,8 +33,11 @@ function App() {
   const [complianceOptions, setComplianceOptions] = useState(defaultComplianceOptions);
   const [severityOptions, setSeverityOptions] = useState(defaultSeverityOptions);
   const [dashboard, setDashboard] = useState(null);
+  const [moduleCatalog, setModuleCatalog] = useState(fallbackModuleCatalog);
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState(null);
+  const [moduleEditor, setModuleEditor] = useState(null);
+  const [moduleSaving, setModuleSaving] = useState(false);
   const toastTimeout = useRef();
 
   const showToast = useCallback((message, variant = "info") => {
@@ -69,11 +75,13 @@ function App() {
         const steps = await lookupsApi.bppSteps().catch(() => fallbackBppSteps);
         const compliance = await lookupsApi.complianceOptions().catch(() => defaultComplianceOptions);
         const severity = await lookupsApi.severityOptions().catch(() => defaultSeverityOptions);
+        const modules = await lookupsApi.modules().catch(() => fallbackModuleCatalog);
 
         setAudits(auditList);
         setBppSteps(steps.length ? steps : fallbackBppSteps);
         setComplianceOptions(compliance);
         setSeverityOptions(severity);
+        setModuleCatalog(modules && Object.keys(modules).length ? modules : fallbackModuleCatalog);
 
         if (auditList.length) {
           const firstId = auditList[0].id;
@@ -91,6 +99,10 @@ function App() {
 
     bootstrap();
   }, [loadAuditDetail, loadDashboard, showToast]);
+
+  useEffect(() => {
+    setModuleEditor(null);
+  }, [selectedAuditId]);
 
   const handleAuditSelect = async (auditId) => {
     setSelectedAuditId(auditId);
@@ -136,6 +148,41 @@ function App() {
       throw error;
     }
   };
+
+  const handleModuleStatusSelect = ({ module, submoduleCode, title, record }) => {
+    setModuleEditor({
+      moduleCode: module.code,
+      moduleTitle: module.title,
+      submoduleCode,
+      submoduleTitle: title,
+      record,
+    });
+  };
+
+  const handleModuleStatusSubmit = async (updates) => {
+    if (!selectedAuditId || !moduleEditor) return;
+    setModuleSaving(true);
+    try {
+      await auditsApi.upsertModuleStatus(selectedAuditId, {
+        module_code: moduleEditor.moduleCode,
+        submodule_code: moduleEditor.submoduleCode,
+        compliance_status: updates.compliance_status,
+        owner: updates.owner || null,
+        notes: updates.notes || null,
+        evidence_reference: updates.evidence_reference || null,
+      });
+      await loadAuditDetail(selectedAuditId);
+      showToast("Module status updated", "success");
+      setModuleEditor(null);
+    } catch (error) {
+      showToast(error.message, "error");
+      throw error;
+    } finally {
+      setModuleSaving(false);
+    }
+  };
+
+  const handleModuleStatusCancel = () => setModuleEditor(null);
 
   if (loading) {
     return (
@@ -190,6 +237,20 @@ function App() {
 
         <div className="column">
           <ChecklistPanel steps={bppSteps} audit={selectedAudit} />
+          <ModuleMatrix
+            catalog={moduleCatalog}
+            statuses={selectedAudit?.module_statuses || []}
+            onSelectSubmodule={handleModuleStatusSelect}
+          />
+          {moduleEditor && (
+            <ModuleStatusForm
+              editor={moduleEditor}
+              complianceOptions={complianceOptions}
+              onSubmit={handleModuleStatusSubmit}
+              onCancel={handleModuleStatusCancel}
+              saving={moduleSaving}
+            />
+          )}
         </div>
       </div>
     </div>

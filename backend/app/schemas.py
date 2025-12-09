@@ -151,6 +151,7 @@ class AuditDetail(AuditRead):
     findings: List[AuditFindingRead] = Field(default_factory=list)
     stakeholders: List[StakeholderRead] = Field(default_factory=list)
     monitoring_snapshots: List[MonitoringSnapshotRead] = Field(default_factory=list)
+    module_statuses: List["ModuleStatusRead"] = Field(default_factory=list)
 
 
 class DashboardSummary(BaseModel):
@@ -169,3 +170,25 @@ class ComplianceOption(BaseModel):
 class SeverityOption(BaseModel):
     value: SeverityEnum
     label: str
+
+
+class ModuleStatusBase(BaseModel):
+    module_code: str
+    submodule_code: str
+    compliance_status: ComplianceStatusEnum = ComplianceStatusEnum.not_started
+    owner: Optional[str] = None
+    notes: Optional[str] = None
+    evidence_reference: Optional[str] = None
+
+
+class ModuleStatusCreate(ModuleStatusBase):
+    pass
+
+
+class ModuleStatusRead(ModuleStatusBase):
+    id: int
+    last_reviewed_at: datetime
+    created_at: datetime
+
+    class Config:
+        orm_mode = True

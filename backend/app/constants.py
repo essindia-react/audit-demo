@@ -12,6 +12,16 @@ class StepChecklist(TypedDict):
     world_bank_alignment: List[str]
 
 
+class ModuleDefinition(TypedDict):
+    """Structured catalog item for high-level modules and sub-modules."""
+
+    code: str
+    title: str
+    category: str
+    description: str
+    submodules: List[str]
+
+
 BPP_NINE_STEPS: List[StepChecklist] = [
     {
         "step": 1,
@@ -260,3 +270,364 @@ MONITORING_AND_EVALUATION_FOCUS = [
     "Sustainability and ESG alignment (UN SDGs)",
     "Use of technology for evidence capture and offline resilience",
 ]
+
+
+CORE_AUDIT_MODULES: List[ModuleDefinition] = [
+    {
+        "code": "A01",
+        "title": "Efficient Procurement Plan / Needs Assessment",
+        "category": "Core Audit Module",
+        "description": "Mirrors BPP Step 1 with granular validation of planning artefacts and governance.",
+        "submodules": [
+            "Requirement identification & justification",
+            "Stakeholder analysis",
+            "Critical needs assessment",
+            "Specification analysis – suitability, openness, objectivity",
+            "Strategic analysis validation",
+            "Feasibility & affordability review",
+            "Contract type & structure selection",
+            "Tender process adoption analysis",
+            "Schedule review (timeline, milestones, financing)",
+            "Quality expectation analysis",
+            "Risk analysis (impact, probability, appetite)",
+            "Project personnel validation",
+            "Market analysis & supplier identification",
+            "Responsibility & RACI validation",
+            "Geographical/locality considerations",
+            "Metrics & data source clarity",
+            "Compliance & reporting structure assessment",
+            "Ethical compliance review",
+            "Review of special/bespoke factors",
+        ],
+    },
+    {
+        "code": "A02",
+        "title": "Budget / Appropriation Audit",
+        "category": "Core Audit Module",
+        "description": "Validates the integrity of funding models, approvals, and anti-corruption controls.",
+        "submodules": [
+            "Cost model verification",
+            "Authorship & review validation",
+            "Total cost evaluation & value-for-money assessment",
+            "Cost model dynamicity (static/fluid/future)",
+            "Data source validation",
+            "Variance & forecasting accuracy",
+            "Comparison with previous cost models",
+            "Cost driver analysis",
+            "Currency, levy, tariff & international considerations",
+            "Signature & approval verification",
+            "Government financial compliance",
+            "Financial management & accounting review",
+            "Post-award financial delta analysis",
+            "Anti-corruption & World Bank compliance",
+            "Budget process review",
+        ],
+    },
+    {
+        "code": "A03",
+        "title": "Advertisement / Invitation to Tender",
+        "category": "Core Audit Module",
+        "description": "Ensures tender notices are inclusive, comprehensive, and properly distributed.",
+        "submodules": [
+            "Advertisement content & clarity",
+            "Inclusion of all requirement elements",
+            "Equality, equity & openness compliance",
+            "Publication method & timing verification",
+            "Media channel verification (print, portal, web)",
+            "Language compliance",
+            "EOI & preapproved bidder list management",
+        ],
+    },
+    {
+        "code": "A04",
+        "title": "Transparent Prequalification",
+        "category": "Core Audit Module",
+        "description": "Audits supplier filtering discipline, governance, and transparency.",
+        "submodules": [
+            "Prequalification strategy audit",
+            "Criteria objectivity validation",
+            "Publication & timing review",
+            "Data source verification",
+            "Scoring calculation review",
+            "Evidence quality assessment",
+            "Objectivity of prequalification",
+            "Prequalification team assessment",
+            "Supplier qualification & shortlisting",
+            "Requalification & reporting",
+            "Query handling & compliance",
+            "Ethical management review",
+            "Supplier notification",
+            "Appeal/resubmission process",
+        ],
+    },
+    {
+        "code": "A05",
+        "title": "Bid Submission Audit",
+        "category": "Core Audit Module",
+        "description": "Scrutinises submission integrity, logging, and exception handling.",
+        "submodules": [
+            "Submission process review",
+            "Recording of received bids",
+            "Time/date stamping verification",
+            "Recipient identification",
+            "Secure logging & storage",
+            "Submission integrity/security",
+            "Handling of late submissions",
+            "Late submission appeals",
+            "Return of late/non-compliant bids",
+        ],
+    },
+    {
+        "code": "A06",
+        "title": "Bid Opening Audit",
+        "category": "Core Audit Module",
+        "description": "Assures the ceremony follows protocol and remains free of undue influence.",
+        "submodules": [
+            "Opening process & attendance verification",
+            "Persons present validation",
+            "Application of guidelines",
+            "Decision-making compliance",
+            "Recording compliance",
+            "Reporting compliance",
+            "Bribery & corruption checks",
+            "Exclusion/rejection handling",
+        ],
+    },
+    {
+        "code": "A07",
+        "title": "Bid Evaluation – Technical & Financial",
+        "category": "Core Audit Module",
+        "description": "Separates technical and financial reviews with robust evidence trails.",
+        "submodules": [
+            "Technical evaluation methodology",
+            "Scoring & tied result management",
+            "Financial bid sequence compliance",
+            "Incorrect bid opening prevention",
+            "Return of unopened bids",
+            "Evaluation criteria application review",
+            "Objectivity validation",
+            "Consistency of evaluation approach",
+            "Blind evaluation compliance",
+            "Handling of subjective criteria",
+            "Data recording of scoring",
+            "Notification to bidders",
+            "Public notification of awards",
+            "Ethical measures verification",
+            "Corruption management",
+        ],
+    },
+    {
+        "code": "A08",
+        "title": "Authority to Incur Expenditure",
+        "category": "Core Audit Module",
+        "description": "Confirms approvals, delegations, and reporting mirror the tender outcome.",
+        "submodules": [
+            "Government process compliance",
+            "Tender outcome reflection",
+            "Evidence supporting authority",
+            "Signature verification",
+            "Filing & reporting accuracy",
+            "Delivery authority processing",
+            "Communication transparency",
+            "Error logs & remediation",
+            "Reporting compliance",
+            "Delegated authority validation",
+            "Scope & threshold accuracy",
+            "Validity & rescind checks",
+            "System authority threshold compliance",
+        ],
+    },
+    {
+        "code": "A09",
+        "title": "Tender Board / FEC Approval",
+        "category": "Core Audit Module",
+        "description": "Audits governance discipline inside Tender Board or FEC forums.",
+        "submodules": [
+            "Structure & process compliance",
+            "Accuracy of submissions",
+            "Verification of evidence",
+            "Quorum & procedural compliance",
+            "Decision minuting",
+            "Filing & reporting",
+            "Compliance with reporting requirements",
+            "Implementation of decisions",
+            "Document filing accuracy",
+        ],
+    },
+    {
+        "code": "A10",
+        "title": "Contract Execution Audit",
+        "category": "Core Audit Module",
+        "description": "Monitors delivery quality, KPIs, risk, and remediation throughout execution.",
+        "submodules": [
+            "Contract commissioning validation",
+            "Implementation vs BPP process",
+            "Performance vs projection",
+            "In-contract performance monitoring",
+            "Breach tolerance monitoring",
+            "Breach remedial actions",
+            "Incident & remedy logs",
+            "Communication traceability",
+            "Resolution methods audit",
+            "Root cause analysis",
+            "Lessons learned process",
+            "Stakeholder management",
+            "KPI reporting audit",
+            "Bonus/penalty validation",
+            "Contract administration quality",
+            "Quality, time & cost tracking",
+            "Risk management evaluation",
+            "Budget deviation analysis",
+            "Best practices reporting",
+            "Post-contract learning analysis",
+            "Reporting compliance",
+            "Personnel/process closeout audit",
+            "Final payments reconciliation",
+        ],
+    },
+    {
+        "code": "A11",
+        "title": "Continuous Review – Remedy – Redress",
+        "category": "Core Audit Module",
+        "description": "Captures closeout reflections, deltas, and remedy plans.",
+        "submodules": [
+            "Post-contract review",
+            "Review of personnel involved",
+            "Post-contract opportunities",
+            "Cost model vs actuals comparison",
+            "Discrepancy reports",
+            "Root cause of variations",
+            "Contract closure process audit",
+        ],
+    },
+]
+
+
+MONITORING_EVALUATION_MODULES: List[ModuleDefinition] = [
+    {
+        "code": "B01",
+        "title": "Monitoring & Evaluation Backbone",
+        "category": "Monitoring & Evaluation Module",
+        "description": "Cross-cutting capabilities that keep auditors informed in near real-time.",
+        "submodules": [
+            "Audit dashboard",
+            "Benchmarking tools",
+            "Contractor historical performance database",
+            "Director background checks",
+            "Contract lifecycle monitoring",
+            "Environmental & ethical compliance monitoring",
+            "Predictive analytics (risk, early warnings)",
+        ],
+    }
+]
+
+
+TECHNICAL_MODULES: List[ModuleDefinition] = [
+    {
+        "code": "C01",
+        "title": "Frontend Module (React.js)",
+        "category": "Technical Module",
+        "description": "User experience layer for auditors in the field and HQ.",
+        "submodules": [
+            "Dashboard components",
+            "Audit workflow UI",
+            "Report viewer",
+            "Photo/evidence capture UI",
+        ],
+    },
+    {
+        "code": "C02",
+        "title": "Backend Module (Python)",
+        "category": "Technical Module",
+        "description": "Business logic, workflow, and notification services.",
+        "submodules": [
+            "Microservices architecture",
+            "Business rules engine",
+            "Audit workflow engine",
+            "Notification & logging services",
+        ],
+    },
+    {
+        "code": "C03",
+        "title": "API Layer",
+        "category": "Technical Module",
+        "description": "Integration layer for ERP/procurement systems and identity.",
+        "submodules": [
+            "REST APIs",
+            "ERP/procurement system integration",
+            "Authentication & RBAC",
+        ],
+    },
+    {
+        "code": "C04",
+        "title": "AI / ML Module",
+        "category": "Technical Module",
+        "description": "Advanced analytics to surface anomalies and insights.",
+        "submodules": [
+            "Anomaly detection",
+            "Predictive risk scoring",
+            "Supplier performance intelligence",
+            "Automated red-flag detection",
+        ],
+    },
+    {
+        "code": "C05",
+        "title": "Database Module",
+        "category": "Technical Module",
+        "description": "Data persistence across structured, semi-structured, and log stores.",
+        "submodules": [
+            "PostgreSQL (structured audit data)",
+            "MongoDB (documents, evidence, contracts)",
+            "Audit trail & log storage",
+        ],
+    },
+    {
+        "code": "C06",
+        "title": "Cloud & Infrastructure",
+        "category": "Technical Module",
+        "description": "Deployment, resiliency, and offline sync tooling.",
+        "submodules": [
+            "AWS / Azure deployment",
+            "Auto-backup & offline sync",
+            "Local device caching for low connectivity",
+        ],
+    },
+    {
+        "code": "C07",
+        "title": "Security Module",
+        "category": "Technical Module",
+        "description": "Controls to meet BPP, World Bank, and international security expectations.",
+        "submodules": [
+            "Multi-factor authentication",
+            "Role-based access control",
+            "Data encryption (configurable)",
+            "Secure evidence storage",
+        ],
+    },
+]
+
+
+SUPPORTING_MODULES: List[ModuleDefinition] = [
+    {
+        "code": "D01",
+        "title": "Supporting Services",
+        "category": "Supporting Module",
+        "description": "Additional capabilities that improve auditor effectiveness and data richness.",
+        "submodules": [
+            "Evidence capture (photos, notes, attachments)",
+            "Offline mode & sync engine",
+            "Reporting & export (PDF/Excel)",
+            "Auditor authentication & device management",
+            "Historical data repository",
+            "Contractor & director intelligence database",
+        ],
+    }
+]
+
+
+MODULE_CATALOG = {
+    "core": CORE_AUDIT_MODULES,
+    "monitoring": MONITORING_EVALUATION_MODULES,
+    "technical": TECHNICAL_MODULES,
+    "supporting": SUPPORTING_MODULES,
+}

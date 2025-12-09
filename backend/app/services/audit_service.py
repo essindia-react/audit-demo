@@ -1,6 +1,7 @@
 """Service functions to orchestrate audit operations."""
 from __future__ import annotations
 
+from datetime import datetime
 from typing import List
 
 from fastapi import HTTPException, status
@@ -23,6 +24,7 @@ def get_audit_or_404(db: Session, audit_id: int) -> models.AuditProject:
             selectinload(models.AuditProject.findings).selectinload(models.AuditFinding.evidences),
             selectinload(models.AuditProject.stakeholders),
             selectinload(models.AuditProject.monitoring_snapshots),
+            selectinload(models.AuditProject.module_statuses),
         )
         .first()
     )
@@ -90,6 +92,32 @@ def add_evidence(
     db.commit()
     db.refresh(evidence)
     return evidence
+
+
+def upsert_module_status(
+    db: Session, audit_id: int, payload: schemas.ModuleStatusCreate
+) -> models.AuditModuleStatus:
+    audit = get_audit_or_404(db, audit_id)
+    record = (
+        db.query(models.AuditModuleStatus)
+        .filter(
+            models.AuditModuleStatus.audit_id == audit.id,
+            models.AuditModuleStatus.module_code == payload.module_code,
+            models.AuditModuleStatus.submodule_code == payload.submodule_code,
+        )
+        .first()
+    )
+    if record:
+        for field, value in payload.dict().items():
+            setattr(record, field, value)
+        record.last_reviewed_at = datetime.utcnow()
+    else:
+        record = models.AuditModuleStatus(audit_id=audit.id, **payload.dict())
+        db.add(record)
+
+    db.commit()
+    db.refresh(record)
+    return record
 
 
 def build_dashboard_summary(db: Session) -> schemas.DashboardSummary:

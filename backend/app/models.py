@@ -78,6 +78,9 @@ class AuditProject(Base):
     monitoring_snapshots: Mapped[List["MonitoringSnapshot"]] = relationship(
         back_populates="audit", cascade="all, delete-orphan"
     )
+    module_statuses: Mapped[List["AuditModuleStatus"]] = relationship(
+        back_populates="audit", cascade="all, delete-orphan"
+    )
 
 
 class AuditStep(Base):
@@ -163,3 +166,22 @@ class MonitoringSnapshot(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     audit: Mapped[AuditProject] = relationship(back_populates="monitoring_snapshots")
+
+
+class AuditModuleStatus(Base):
+    __tablename__ = "audit_module_statuses"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    audit_id: Mapped[int] = mapped_column(ForeignKey("audit_projects.id", ondelete="CASCADE"))
+    module_code: Mapped[str] = mapped_column(String(10), nullable=False)
+    submodule_code: Mapped[str] = mapped_column(String(50), nullable=False)
+    compliance_status: Mapped[ComplianceStatusEnum] = mapped_column(
+        SAEnum(ComplianceStatusEnum), default=ComplianceStatusEnum.not_started, nullable=False
+    )
+    owner: Mapped[Optional[str]] = mapped_column(String(120))
+    notes: Mapped[Optional[str]] = mapped_column(Text)
+    evidence_reference: Mapped[Optional[str]] = mapped_column(String(255))
+    last_reviewed_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    audit: Mapped[AuditProject] = relationship(back_populates="module_statuses")

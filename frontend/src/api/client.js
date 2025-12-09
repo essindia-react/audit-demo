@@ -34,6 +34,8 @@ export const auditsApi = {
       body: JSON.stringify(payload),
     }),
   dashboard: () => request("/audits/dashboard/summary"),
+  upsertModuleStatus: (auditId, payload) =>
+    request(`/audits/${auditId}/modules`, { method: "POST", body: JSON.stringify(payload) }),
 };
 
 export const lookupsApi = {
@@ -42,6 +44,7 @@ export const lookupsApi = {
   complianceOptions: () => request("/lookups/compliance-options"),
   severityOptions: () => request("/lookups/severity-options"),
   monitoringFocus: () => request("/lookups/monitoring-focus"),
+  modules: () => request("/lookups/modules"),
 };
 
 export { API_BASE_URL };

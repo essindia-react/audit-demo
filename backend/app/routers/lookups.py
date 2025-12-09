@@ -40,3 +40,8 @@ def severity_options():
 @router.get("/monitoring-focus")
 def monitoring_focus():
     return constants.MONITORING_AND_EVALUATION_FOCUS
+
+
+@router.get("/modules")
+def module_catalog():
+    return constants.MODULE_CATALOG

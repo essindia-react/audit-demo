@@ -78,3 +78,23 @@ def add_evidence(
     db: Session = Depends(get_db),
 ):
     return audit_service.add_evidence(db, audit_id, finding_id, payload)
+
+
+@router.get(
+    "/{audit_id}/modules",
+    response_model=List[schemas.ModuleStatusRead],
+)
+def list_module_statuses(audit_id: int, db: Session = Depends(get_db)):
+    audit = audit_service.get_audit_or_404(db, audit_id)
+    return audit.module_statuses
+
+
+@router.post(
+    "/{audit_id}/modules",
+    response_model=schemas.ModuleStatusRead,
+    status_code=status.HTTP_201_CREATED,
+)
+def upsert_module_status(
+    audit_id: int, payload: schemas.ModuleStatusCreate, db: Session = Depends(get_db)
+):
+    return audit_service.upsert_module_status(db, audit_id, payload)
