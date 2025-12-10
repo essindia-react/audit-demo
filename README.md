@@ -31,6 +31,7 @@ Full-stack reference implementation for the Nigerian Bureau of Public Procuremen
    ```bash
    uvicorn app.main:app --reload
    ```
+   Evidence uploads default to `storage/evidence` (configurable via `EVIDENCE_STORAGE_DIR`) and are served at `GET /evidence/{filename}`.
 
 ### Key endpoints
 | Method | Path | Description |
@@ -47,6 +48,8 @@ Full-stack reference implementation for the Nigerian Bureau of Public Procuremen
 | POST | `/auth/register` | Create user account + issue JWT |
 | POST | `/auth/login` | Exchange credentials for JWT |
 | GET | `/auth/me` | Fetch current profile (requires Bearer token) |
+| GET | `/audits/{id}/requirements/` | List requirement identification entries |
+| POST | `/audits/{id}/requirements/` | Create requirement entry (multipart, supports evidence upload) |
 
 ## Frontend setup (React)
 1. Install dependencies and configure API base URL:
@@ -69,6 +72,7 @@ The React dashboard includes:
 - Audit selector, creation form, and detail workspace with step updates + findings capture.
 - Checklist panel mirroring the BPP nine steps + H2 monitoring/remedy module with World Bank alignment tags.
 - Authentication shell with login & registration workflow (JWT stored client-side, injected into all API calls).
+- Requirement Identification panel with evidence uploads; feeds future Needs Assessment reports.
 
 ## Next steps / extensions
 - Add auth (MFA, RBAC) and encrypted offline store for field devices.

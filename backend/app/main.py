@@ -1,17 +1,23 @@
 """Entrypoint for the FastAPI application."""
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from .config import get_settings
 from .database import engine
 from .models import Base
-from .routers import audits, auth, lookups
+from .routers import audits, auth, lookups, requirements
 
 settings = get_settings()
 
+Path(settings.evidence_storage_dir).mkdir(parents=True, exist_ok=True)
+
 app = FastAPI(title=settings.app_name)
+app.mount("/evidence", StaticFiles(directory=settings.evidence_storage_dir), name="evidence")
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,6 +32,7 @@ app.add_middleware(
 def on_startup() -> None:
     if settings.sync_schema_on_startup:
         Base.metadata.create_all(bind=engine)
+    Path(settings.evidence_storage_dir).mkdir(parents=True, exist_ok=True)
 
 
 @app.get("/")
@@ -36,3 +43,4 @@ def root_healthcheck():
 app.include_router(lookups.router)
 app.include_router(audits.router)
 app.include_router(auth.router)
+app.include_router(requirements.router)

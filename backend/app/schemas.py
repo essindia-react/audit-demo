@@ -152,6 +152,7 @@ class AuditDetail(AuditRead):
     stakeholders: List[StakeholderRead] = Field(default_factory=list)
     monitoring_snapshots: List[MonitoringSnapshotRead] = Field(default_factory=list)
     module_statuses: List["ModuleStatusRead"] = Field(default_factory=list)
+    requirements: List["RequirementRead"] = Field(default_factory=list)
 
 
 class DashboardSummary(BaseModel):
@@ -220,3 +221,26 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     sub: Optional[str] = None
+
+
+class RequirementBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    justification: str
+    expected_outcomes: Optional[str] = None
+    estimated_cost: Optional[float] = Field(default=None, ge=0)
+
+
+class RequirementCreate(RequirementBase):
+    pass
+
+
+class RequirementRead(RequirementBase):
+    id: int
+    audit_id: int
+    evidence_path: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True

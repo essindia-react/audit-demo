@@ -82,6 +82,9 @@ class AuditProject(Base):
     module_statuses: Mapped[List["AuditModuleStatus"]] = relationship(
         back_populates="audit", cascade="all, delete-orphan"
     )
+    requirement_entries: Mapped[List["RequirementEntry"]] = relationship(
+        back_populates="audit", cascade="all, delete-orphan"
+    )
 
 
 class AuditStep(Base):
@@ -198,3 +201,22 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class RequirementEntry(Base):
+    __tablename__ = "requirement_entries"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    audit_id: Mapped[int] = mapped_column(ForeignKey("audit_projects.id", ondelete="CASCADE"))
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text)
+    justification: Mapped[str] = mapped_column(Text, nullable=False)
+    expected_outcomes: Mapped[Optional[str]] = mapped_column(Text)
+    estimated_cost: Mapped[Optional[float]] = mapped_column(Float)
+    evidence_path: Mapped[Optional[str]] = mapped_column(String(512))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+    audit: Mapped[AuditProject] = relationship(back_populates="requirement_entries")

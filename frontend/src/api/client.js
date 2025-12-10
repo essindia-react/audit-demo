@@ -27,13 +27,18 @@ export function getAccessToken() {
 
 async function request(path, options = {}) {
   const token = getAccessToken();
+  const headers = {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options.headers || {}),
+  };
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
+  if (!isFormData && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers || {}),
-    },
     ...options,
+    headers,
   });
 
   if (!response.ok) {
@@ -91,6 +96,14 @@ export const authApi = {
       }),
     }),
   me: () => request("/auth/me"),
+};
+
+export const requirementsApi = {
+  create: (auditId, payload) =>
+    request(`/audits/${auditId}/requirements/`, {
+      method: "POST",
+      body: payload,
+    }),
 };
 
 export { API_BASE_URL };

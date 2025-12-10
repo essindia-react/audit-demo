@@ -7,7 +7,8 @@ import ChecklistPanel from "./components/ChecklistPanel";
 import ModuleMatrix from "./components/ModuleMatrix";
 import ModuleStatusForm from "./components/ModuleStatusForm";
 import AuthPanel from "./components/AuthPanel";
-import { auditsApi, authApi, lookupsApi, setAccessToken, getAccessToken } from "./api/client";
+import RequirementForm from "./components/RequirementForm";
+import { auditsApi, authApi, lookupsApi, requirementsApi, setAccessToken, getAccessToken } from "./api/client";
 import { fallbackBppSteps } from "./data/bppSteps";
 import { fallbackModuleCatalog } from "./data/modules";
 import "./App.css";
@@ -43,6 +44,7 @@ function App() {
   const [authMode, setAuthMode] = useState("login");
   const [authLoading, setAuthLoading] = useState(false);
   const [authReady, setAuthReady] = useState(false);
+  const [requirementSaving, setRequirementSaving] = useState(false);
   const toastTimeout = useRef();
 
   const showToast = useCallback((message, variant = "info") => {
@@ -246,6 +248,21 @@ function App() {
     }
   };
 
+  const handleRequirementSubmit = async (formData) => {
+    if (!selectedAuditId) return;
+    setRequirementSaving(true);
+    try {
+      await requirementsApi.create(selectedAuditId, formData);
+      await loadAuditDetail(selectedAuditId);
+      showToast("Requirement captured", "success");
+    } catch (error) {
+      showToast(error.message, "error");
+      throw error;
+    } finally {
+      setRequirementSaving(false);
+    }
+  };
+
   if (!authReady || (currentUser && loading)) {
     return (
       <div className="loading-screen">
@@ -312,6 +329,13 @@ function App() {
               <h2>No audit selected</h2>
               <p>Choose an audit from the list or create a new one to get started.</p>
             </div>
+          )}
+          {selectedAudit && (
+            <RequirementForm
+              entries={selectedAudit.requirements || []}
+              onSubmit={handleRequirementSubmit}
+              saving={requirementSaving}
+            />
           )}
         </div>
 
