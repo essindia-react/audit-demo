@@ -153,6 +153,7 @@ class AuditDetail(AuditRead):
     monitoring_snapshots: List[MonitoringSnapshotRead] = Field(default_factory=list)
     module_statuses: List["ModuleStatusRead"] = Field(default_factory=list)
     requirements: List["RequirementRead"] = Field(default_factory=list)
+    requirement_stakeholders: List["StakeholderAnalysisRead"] = Field(default_factory=list)
 
 
 class DashboardSummary(BaseModel):
@@ -239,6 +240,28 @@ class RequirementRead(RequirementBase):
     id: int
     audit_id: int
     evidence_path: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class StakeholderAnalysisBase(BaseModel):
+    name: str
+    stakeholder_type: str
+    role: str
+    interest_level: str
+    influence_level: str
+
+
+class StakeholderAnalysisCreate(StakeholderAnalysisBase):
+    pass
+
+
+class StakeholderAnalysisRead(StakeholderAnalysisBase):
+    id: int
+    audit_id: int
     created_at: datetime
     updated_at: datetime
 

@@ -8,7 +8,16 @@ import ModuleMatrix from "./components/ModuleMatrix";
 import ModuleStatusForm from "./components/ModuleStatusForm";
 import AuthPanel from "./components/AuthPanel";
 import RequirementForm from "./components/RequirementForm";
-import { auditsApi, authApi, lookupsApi, requirementsApi, setAccessToken, getAccessToken } from "./api/client";
+import StakeholderForm from "./components/StakeholderForm";
+import {
+  auditsApi,
+  authApi,
+  lookupsApi,
+  requirementsApi,
+  stakeholdersApi,
+  setAccessToken,
+  getAccessToken,
+} from "./api/client";
 import { fallbackBppSteps } from "./data/bppSteps";
 import { fallbackModuleCatalog } from "./data/modules";
 import "./App.css";
@@ -45,6 +54,7 @@ function App() {
   const [authLoading, setAuthLoading] = useState(false);
   const [authReady, setAuthReady] = useState(false);
   const [requirementSaving, setRequirementSaving] = useState(false);
+  const [stakeholderSaving, setStakeholderSaving] = useState(false);
   const toastTimeout = useRef();
 
   const showToast = useCallback((message, variant = "info") => {
@@ -263,6 +273,21 @@ function App() {
     }
   };
 
+  const handleStakeholderSubmit = async (payload) => {
+    if (!selectedAuditId) return;
+    setStakeholderSaving(true);
+    try {
+      await stakeholdersApi.create(selectedAuditId, payload);
+      await loadAuditDetail(selectedAuditId);
+      showToast("Stakeholder captured", "success");
+    } catch (error) {
+      showToast(error.message, "error");
+      throw error;
+    } finally {
+      setStakeholderSaving(false);
+    }
+  };
+
   if (!authReady || (currentUser && loading)) {
     return (
       <div className="loading-screen">
@@ -353,6 +378,13 @@ function App() {
               onSubmit={handleModuleStatusSubmit}
               onCancel={handleModuleStatusCancel}
               saving={moduleSaving}
+            />
+          )}
+          {selectedAudit && (
+            <StakeholderForm
+              entries={selectedAudit.requirement_stakeholders || []}
+              onSubmit={handleStakeholderSubmit}
+              saving={stakeholderSaving}
             />
           )}
         </div>

@@ -106,4 +106,13 @@ export const requirementsApi = {
     }),
 };
 
+export const stakeholdersApi = {
+  create: (auditId, payload) =>
+    request(`/audits/${auditId}/stakeholders/`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: { "Content-Type": "application/json" },
+    }),
+};
+
 export { API_BASE_URL };
