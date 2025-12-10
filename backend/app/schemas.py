@@ -154,6 +154,7 @@ class AuditDetail(AuditRead):
     module_statuses: List["ModuleStatusRead"] = Field(default_factory=list)
     requirements: List["RequirementRead"] = Field(default_factory=list)
     requirement_stakeholders: List["StakeholderAnalysisRead"] = Field(default_factory=list)
+    critical_needs: List["CriticalNeedRead"] = Field(default_factory=list)
 
 
 class DashboardSummary(BaseModel):
@@ -262,6 +263,27 @@ class StakeholderAnalysisCreate(StakeholderAnalysisBase):
 class StakeholderAnalysisRead(StakeholderAnalysisBase):
     id: int
     audit_id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class CriticalNeedBase(BaseModel):
+    need_item: str
+    urgency_score: int = Field(..., ge=1, le=5)
+    importance_score: int = Field(..., ge=1, le=5)
+
+
+class CriticalNeedCreate(CriticalNeedBase):
+    pass
+
+
+class CriticalNeedRead(CriticalNeedBase):
+    id: int
+    audit_id: int
+    is_critical: bool
     created_at: datetime
     updated_at: datetime
 

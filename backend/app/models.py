@@ -88,6 +88,9 @@ class AuditProject(Base):
     requirement_stakeholders: Mapped[List["RequirementStakeholder"]] = relationship(
         back_populates="audit", cascade="all, delete-orphan"
     )
+    requirement_needs: Mapped[List["RequirementNeed"]] = relationship(
+        back_populates="audit", cascade="all, delete-orphan"
+    )
 
 
 class AuditStep(Base):
@@ -241,3 +244,20 @@ class RequirementStakeholder(Base):
     )
 
     audit: Mapped[AuditProject] = relationship(back_populates="requirement_stakeholders")
+
+
+class RequirementNeed(Base):
+    __tablename__ = "requirement_needs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    audit_id: Mapped[int] = mapped_column(ForeignKey("audit_projects.id", ondelete="CASCADE"))
+    need_item: Mapped[str] = mapped_column(String(255), nullable=False)
+    urgency_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    importance_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    is_critical: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+    audit: Mapped[AuditProject] = relationship(back_populates="requirement_needs")

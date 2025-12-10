@@ -27,6 +27,7 @@ def get_audit_or_404(db: Session, audit_id: int) -> models.AuditProject:
             selectinload(models.AuditProject.module_statuses),
             selectinload(models.AuditProject.requirement_entries),
             selectinload(models.AuditProject.requirement_stakeholders),
+            selectinload(models.AuditProject.requirement_needs),
         )
         .first()
     )

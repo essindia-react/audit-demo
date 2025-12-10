@@ -9,12 +9,14 @@ import ModuleStatusForm from "./components/ModuleStatusForm";
 import AuthPanel from "./components/AuthPanel";
 import RequirementForm from "./components/RequirementForm";
 import StakeholderForm from "./components/StakeholderForm";
+import CriticalNeedsForm from "./components/CriticalNeedsForm";
 import {
   auditsApi,
   authApi,
   lookupsApi,
   requirementsApi,
   stakeholdersApi,
+  criticalNeedsApi,
   setAccessToken,
   getAccessToken,
 } from "./api/client";
@@ -55,6 +57,7 @@ function App() {
   const [authReady, setAuthReady] = useState(false);
   const [requirementSaving, setRequirementSaving] = useState(false);
   const [stakeholderSaving, setStakeholderSaving] = useState(false);
+  const [criticalNeedSaving, setCriticalNeedSaving] = useState(false);
   const toastTimeout = useRef();
 
   const showToast = useCallback((message, variant = "info") => {
@@ -288,6 +291,21 @@ function App() {
     }
   };
 
+  const handleCriticalNeedSubmit = async (payload) => {
+    if (!selectedAuditId) return;
+    setCriticalNeedSaving(true);
+    try {
+      await criticalNeedsApi.create(selectedAuditId, payload);
+      await loadAuditDetail(selectedAuditId);
+      showToast("Need scored", "success");
+    } catch (error) {
+      showToast(error.message, "error");
+      throw error;
+    } finally {
+      setCriticalNeedSaving(false);
+    }
+  };
+
   if (!authReady || (currentUser && loading)) {
     return (
       <div className="loading-screen">
@@ -360,6 +378,13 @@ function App() {
               entries={selectedAudit.requirements || []}
               onSubmit={handleRequirementSubmit}
               saving={requirementSaving}
+            />
+          )}
+          {selectedAudit && (
+            <CriticalNeedsForm
+              entries={selectedAudit.critical_needs || []}
+              onSubmit={handleCriticalNeedSubmit}
+              saving={criticalNeedSaving}
             />
           )}
         </div>

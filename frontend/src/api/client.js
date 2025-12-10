@@ -115,4 +115,13 @@ export const stakeholdersApi = {
     }),
 };
 
+export const criticalNeedsApi = {
+  create: (auditId, payload) =>
+    request(`/audits/${auditId}/critical-needs/`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: { "Content-Type": "application/json" },
+    }),
+};
+
 export { API_BASE_URL };
