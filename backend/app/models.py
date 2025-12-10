@@ -14,6 +14,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     Integer,
+    JSON,
     String,
     Text,
     UniqueConstraint,
@@ -89,6 +90,9 @@ class AuditProject(Base):
         back_populates="audit", cascade="all, delete-orphan"
     )
     requirement_needs: Mapped[List["RequirementNeed"]] = relationship(
+        back_populates="audit", cascade="all, delete-orphan"
+    )
+    specification_analyses: Mapped[List["SpecificationAnalysis"]] = relationship(
         back_populates="audit", cascade="all, delete-orphan"
     )
 
@@ -261,3 +265,20 @@ class RequirementNeed(Base):
     )
 
     audit: Mapped[AuditProject] = relationship(back_populates="requirement_needs")
+
+
+class SpecificationAnalysis(Base):
+    __tablename__ = "specification_analyses"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    audit_id: Mapped[int] = mapped_column(ForeignKey("audit_projects.id", ondelete="CASCADE"))
+    technical_description: Mapped[str] = mapped_column(Text, nullable=False)
+    openness_checks: Mapped[List[str]] = mapped_column(JSON, default=list)
+    supplier_bias: Mapped[bool] = mapped_column(Boolean, default=False)
+    market_notes: Mapped[Optional[str]] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+
+    audit: Mapped[AuditProject] = relationship(back_populates="specification_analyses")

@@ -10,6 +10,7 @@ import AuthPanel from "./components/AuthPanel";
 import RequirementForm from "./components/RequirementForm";
 import StakeholderForm from "./components/StakeholderForm";
 import CriticalNeedsForm from "./components/CriticalNeedsForm";
+import SpecificationAnalysisForm from "./components/SpecificationAnalysisForm";
 import {
   auditsApi,
   authApi,
@@ -17,6 +18,7 @@ import {
   requirementsApi,
   stakeholdersApi,
   criticalNeedsApi,
+  specificationsApi,
   setAccessToken,
   getAccessToken,
 } from "./api/client";
@@ -58,6 +60,7 @@ function App() {
   const [requirementSaving, setRequirementSaving] = useState(false);
   const [stakeholderSaving, setStakeholderSaving] = useState(false);
   const [criticalNeedSaving, setCriticalNeedSaving] = useState(false);
+  const [specAnalysisSaving, setSpecAnalysisSaving] = useState(false);
   const toastTimeout = useRef();
 
   const showToast = useCallback((message, variant = "info") => {
@@ -306,6 +309,25 @@ function App() {
     }
   };
 
+  const handleSpecAnalysisSubmit = async (payload) => {
+    if (!selectedAuditId) return;
+    setSpecAnalysisSaving(true);
+    try {
+      await specificationsApi.create(selectedAuditId, payload);
+      await loadAuditDetail(selectedAuditId);
+      if (payload.supplier_bias) {
+        showToast("Bias flagged for review", "error");
+      } else {
+        showToast("Specification logged", "success");
+      }
+    } catch (error) {
+      showToast(error.message, "error");
+      throw error;
+    } finally {
+      setSpecAnalysisSaving(false);
+    }
+  };
+
   if (!authReady || (currentUser && loading)) {
     return (
       <div className="loading-screen">
@@ -410,6 +432,13 @@ function App() {
               entries={selectedAudit.requirement_stakeholders || []}
               onSubmit={handleStakeholderSubmit}
               saving={stakeholderSaving}
+            />
+          )}
+          {selectedAudit && (
+            <SpecificationAnalysisForm
+              entries={selectedAudit.specification_analyses || []}
+              onSubmit={handleSpecAnalysisSubmit}
+              saving={specAnalysisSaving}
             />
           )}
         </div>

@@ -10,7 +10,15 @@ from fastapi.staticfiles import StaticFiles
 from .config import get_settings
 from .database import engine
 from .models import Base
-from .routers import audits, auth, critical_needs, lookups, requirements, stakeholder_analysis
+from .routers import (
+    audits,
+    auth,
+    critical_needs,
+    lookups,
+    requirements,
+    specification_analyses,
+    stakeholder_analysis,
+)
 
 settings = get_settings()
 
@@ -46,3 +54,4 @@ app.include_router(auth.router)
 app.include_router(requirements.router)
 app.include_router(stakeholder_analysis.router)
 app.include_router(critical_needs.router)
+app.include_router(specification_analyses.router)

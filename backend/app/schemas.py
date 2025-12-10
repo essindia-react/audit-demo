@@ -155,6 +155,7 @@ class AuditDetail(AuditRead):
     requirements: List["RequirementRead"] = Field(default_factory=list)
     requirement_stakeholders: List["StakeholderAnalysisRead"] = Field(default_factory=list)
     critical_needs: List["CriticalNeedRead"] = Field(default_factory=list)
+    specification_analyses: List["SpecificationAnalysisRead"] = Field(default_factory=list)
 
 
 class DashboardSummary(BaseModel):
@@ -284,6 +285,27 @@ class CriticalNeedRead(CriticalNeedBase):
     id: int
     audit_id: int
     is_critical: bool
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class SpecificationAnalysisBase(BaseModel):
+    technical_description: str
+    openness_checks: List[str] = Field(default_factory=list)
+    supplier_bias: bool = False
+    market_notes: Optional[str] = None
+
+
+class SpecificationAnalysisCreate(SpecificationAnalysisBase):
+    pass
+
+
+class SpecificationAnalysisRead(SpecificationAnalysisBase):
+    id: int
+    audit_id: int
     created_at: datetime
     updated_at: datetime
 

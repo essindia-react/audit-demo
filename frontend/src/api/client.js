@@ -124,4 +124,13 @@ export const criticalNeedsApi = {
     }),
 };
 
+export const specificationsApi = {
+  create: (auditId, payload) =>
+    request(`/audits/${auditId}/specifications/`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: { "Content-Type": "application/json" },
+    }),
+};
+
 export { API_BASE_URL };

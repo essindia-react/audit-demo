@@ -54,6 +54,8 @@ Full-stack reference implementation for the Nigerian Bureau of Public Procuremen
 | POST | `/audits/{id}/stakeholders/` | Create stakeholder analysis entry |
 | GET | `/audits/{id}/critical-needs/` | List critical needs assessment records |
 | POST | `/audits/{id}/critical-needs/` | Create critical need entry (auto critical flag) |
+| GET | `/audits/{id}/specifications/` | List specification suitability/openness entries |
+| POST | `/audits/{id}/specifications/` | Create specification analysis entry (flags bias) |
 
 ## Frontend setup (React)
 1. Install dependencies and configure API base URL:
@@ -79,6 +81,7 @@ The React dashboard includes:
 - Requirement Identification panel with evidence uploads; feeds future Needs Assessment reports.
 - Stakeholder Analysis form capturing type/role/interest/influence for matrix outputs.
 - Critical Needs Assessment scoring urgency vs importance with automatic critical tagging.
+- Specification Analysis workflow with openness checklist and supplier bias alerts feeding ethical reports.
 
 ## Next steps / extensions
 - Add auth (MFA, RBAC) and encrypted offline store for field devices.
